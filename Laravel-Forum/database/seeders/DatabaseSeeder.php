@@ -3,6 +3,10 @@
 namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+
+use App\Models\Comment;
+use App\Models\Post;
+use App\Models\User;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -12,11 +16,17 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // \App\Models\User::factory(10)->create();
+        $users = User::factory(10)->create();
+        $posts = Post::factory(50)->recycle($users)->create();
+        $comments = Comment::factory(20)->recycle($users)->recycle($posts)->create();
 
-        // \App\Models\User::factory()->create([
-        //     'name' => 'Test User',
-        //     'email' => 'test@example.com',
-        // ]);
+        User::factory()
+            ->has(Post::factory(5))
+            ->has(Comment::factory(5)->recycle($posts))
+            ->create([
+                'name' => 'TuanTQ',
+                'email' => 'admin@gmail.com',
+                'password' => hash('sha256', '12341234'),
+            ]);
     }
 }
